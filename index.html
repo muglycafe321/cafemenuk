@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mugly Café — Digital Menu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0E0C09;
+            --bg-card: #161b27;
+            --gold-primary: #C9963A;
+            --gold-light: #E8B84B;
+            --gold-glow: rgba(201, 150, 58, 0.15);
+            --text-white: #FFFFFF;
+            --text-muted: #9CA3AF;
+            --veg-green: #22C55E;
+            --nonveg-red: #EF4444;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Hero Header */
+        .hero-header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cafe-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+            position: relative;
+            animation: fadeUp 0.8s ease-out;
+        }
+
+        .cafe-subtitle {
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            animation: fadeUp 0.8s ease-out 0.1s both;
+        }
+
+        .ornament-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: fadeUp 0.8s ease-out 0.2s both;
+        }
+
+        .ornament-line::before,
+        .ornament-line::after {
+            content: '';
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+        }
+
+        .ornament-icon {
+            width: 24px;
+            height: 24px;
+            fill: var(--gold-primary);
+        }
+
+        .info-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            animation: fadeUp 0.8s ease-out 0.3s both;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-icon {
+            font-size: 1rem;
+        }
+
+        /* Special Offer Banner */
+        .special-banner {
+            margin: 0 16px 24px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, rgba(201, 150, 58, 0.1) 0%, rgba(232, 184, 75, 0.05) 100%);
+            border: 1px solid var(--gold-primary);
+            border-radius: 12px;
+            animation: fadeUp 0.8s ease-out 0.4s both;
+        }
+
+        .special-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            color: var(--bg-dark);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        .special-item {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--gold-light);
+            margin-bottom: 6px;
+        }
+
+        .special-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .special-price {
+            color: var(--text-white);
+            font-weight: 500;
+        }
+
+        /* Sticky Navigation */
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(14, 12, 9, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(201, 150, 58, 0.3);
+            padding: 0 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sticky-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            white-space: nowrap;
+            padding: 12px 0;
+        }
+
+        .nav-tab {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 8px 14px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--gold-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-tab.active {
+            color: var(--gold-primary);
+        }
+
+        .nav-tab.active::after {
+            width: 80%;
+        }
+
+        .nav-tab:hover {
+            color: var(--gold-light);
+        }
+
+        /* Menu Sections */
+        .menu-container {
+            padding: 24px 16px 80px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .menu-section {
+            margin-bottom: 32px;
+            scroll-margin-top: 70px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--gold-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--gold-primary), transparent);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background: rgba(201, 150, 58, 0.05);
+            margin: 0 -12px;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .veg-indicator,
+        .nonveg-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .veg-indicator {
+            background: var(--veg-green);
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+        }
+
+        .nonveg-indicator {
+            background: var(--nonveg-red);
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+        }
+
+        .item-name {
+            font-size: 0.95rem;
+            color: var(--text-white);
+            flex-shrink: 0;
+        }
+
+        .dotted-line {
+            flex: 1;
+            border-bottom: 1px dotted rgba(201, 150, 58, 0.3);
+            margin: 0 12px;
+            min-width: 20px;
+        }
+
+        .item-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gold-light);
+            flex-shrink: 0;
+        }
+
+        .rupee {
+            font-size: 0.75rem;
+            vertical-align: super;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            margin: 24px 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px 60px;
+            background: linear-gradient(180deg, transparent, rgba(201, 150, 58, 0.05));
+            border-top: 1px solid rgba(201, 150, 58, 0.2);
+        }
+
+        .footer-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--gold-primary);
+            margin-bottom: 8px;
+        }
+
+        .footer-address {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .phone-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            color: var(--bg-dark);
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            margin-bottom: 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .phone-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(201, 150, 58, 0.3);
+        }
+
+        .footer-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 99;
+            box-shadow: 0 4px 15px rgba(201, 150, 58, 0.4);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px);
+        }
+
+        .back-to-top svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--bg-dark);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 360px) {
+            .cafe-name {
+                font-size: 2.5rem;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .cafe-name {
+                font-size: 4rem;
+            }
+
+            .menu-container {
+                max-width: 700px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Header -->
+    <header class="hero-header">
+        <h1 class="cafe-name">MUGLY CAFÉ</h1>
+        <p class="cafe-subtitle">KUTHUPARAMBA</p>
+        <div class="ornament-line">
+            <svg class="ornament-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L14.5 9H22L16 13.5L18.5 21L12 16.5L5.5 21L8 13.5L2 9H9.5L12 2Z"/>
+            </svg>
+        </div>
+        <div class="info-row">
+            <span class="info-item"><span class="info-icon">📍</span>Municipality Office Building</span>
+            <span class="info-item"><span class="info-icon">🚚</span>Home Delivery 3km</span>
+            <span class="info-item"><span class="info-icon">📞</span>7025212122</span>
+        </div>
+    </header>
+
+    <!-- Special Offer Banner -->
+    <div class="special-banner">
+        <span class="special-badge">🔥 Special</span>
+        <p class="special-item">9 Pcs. Fried Chicken — <span class="special-price">₹299</span> · Dip 3 included</p>
+        <p class="special-item">Loaded Fries Normal — <span class="special-price">₹150</span></p>
+    </div>
+
+    <!-- Sticky Navigation -->
+    <nav class="sticky-nav">
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-section="rolls">Rolls</button>
+            <button class="nav-tab" data-section="loaded-fries">Loaded Fries</button>
+            <button class="nav-tab" data-section="chicken">Chicken</button>
+            <button class="nav-tab" data-section="maggi">Maggi</button>
+            <button class="nav-tab" data-section="sandwich">Sandwich</button>
+            <button class="nav-tab" data-section="pasta">Pasta</button>
+            <button class="nav-tab" data-section="pizza">Pizza</button>
+            <button class="nav-tab" data-section="momos">Momos</button>
+            <button class="nav-tab" data-section="burger">Burger</button>
+            <button class="nav-tab" data-section="fresh-cream">Fresh Cream</button>
+            <button class="nav-tab" data-section="falooda">Falooda</button>
+            <button class="nav-tab" data-section="ice-cream">Ice Cream</button>
+            <button class="nav-tab" data-section="mojito">Mojito</button>
+            <button class="nav-tab" data-section="lemon">Lemon</button>
+            <button class="nav-tab" data-section="avil-milk">Avil Milk</button>
+            <button class="nav-tab" data-section="shake">Shake</button>
+            <button class="nav-tab" data-section="shake-tender">Shake & Tender</button>
+            <button class="nav-tab" data-section="juice">Juice</button>
+            <button class="nav-tab" data-section="hot-drinks">Hot Drinks</button>
+        </div>
+    </nav>
+
+    <!-- Menu Container -->
+    <main class="menu-container">
+        <!-- ROLLS -->
+        <section class="menu-section" id="rolls">
+            <h2 class="section-title">Rolls</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Paneer Roll</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>75</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Fried Roll</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Falafel Roll</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Sp. Falafel Roll</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Zinger Wrap</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>115</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Porotta Roll</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- LOADED FRIES -->
+        <section class="menu-section" id="loaded-fries">
+            <h2 class="section-title">Loaded Fries</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Loaded Fries</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>190</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Peri Peri Loaded</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>210</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Special Loaded</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>230</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- CHICKEN ITEMS -->
+        <section class="menu-section" id="chicken">
+            <h2 class="section-title">Chicken Items</h2>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Special Fried 1pcs</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>140</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Chicken Lolly Pop</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>160</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Peri Peri Dynamic</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>180</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Shezwan Wings</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>160</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">CH Nuggets</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>140</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Chicken Strip</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>160</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Pop Chick</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>130</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Chicken Wings Normal</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>140</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- MAGGI -->
+        <section class="menu-section" id="maggi">
+            <h2 class="section-title">Maggi</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Maggi</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Maggi Special</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Cheese Maggi</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>140</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- SANDWICH -->
+        <section class="menu-section" id="sandwich">
+            <h2 class="section-title">Sandwich</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Normal Sandwich</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>99</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Club Special Sandwich</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>220</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- PASTA -->
+        <section class="menu-section" id="pasta">
+            <h2 class="section-title">Pasta</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Pasta</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>210</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Pasta Special</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>260</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- PIZZA -->
+        <section class="menu-section" id="pizza">
+            <h2 class="section-title">Pizza</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Normal Pizza</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>220</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Peri Peri Pizza</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>240</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">BBQ Pizza</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>249</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Paneer Pizza</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>220</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Mushroom Pizza</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>230</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- MOMOS -->
+        <section class="menu-section" id="momos">
+            <h2 class="section-title">Momos</h2>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">CH Steam Momos</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>160</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Shezwan Momos</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>180</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Tandoori Momos</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>190</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- BURGER -->
+        <section class="menu-section" id="burger">
+            <h2 class="section-title">Burger</h2>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Chicken Burger</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Crispy Double Burger</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>179</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Veg Burger</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Zinger Burger</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>110</span></div>
+            <div class="menu-item"><span class="nonveg-indicator"></span><span class="item-name">Kids Burger</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Aloo Tikka Burger</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>100</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Falafel Burger</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- FRESH CREAM -->
+        <section class="menu-section" id="fresh-cream">
+            <h2 class="section-title">Fresh Cream</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Custard Cream</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>190</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Apple Cream</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>190</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Dry Fruit Cream</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>210</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Mango Cream</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>190</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Berry Mix Cream</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>240</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Mixed Fruit Cream</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>220</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Fruit With Choco</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>135</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- FALOODA -->
+        <section class="menu-section" id="falooda">
+            <h2 class="section-title">Falooda</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Dry Fruit Falooda</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>180</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Normal Falooda</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>120</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Royal Falooda</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>140</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Special Falooda</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>180</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Chocolate Falooda</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>180</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Fruit Salad</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Cut Fruit With Honey</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Butter Fruit With Honey</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>100</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- ICE CREAM -->
+        <section class="menu-section" id="ice-cream">
+            <h2 class="section-title">Ice Cream</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Scoop</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>40</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Special Scoop</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Cake With Ice Cream</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>160</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- MOJITO -->
+        <section class="menu-section" id="mojito">
+            <h2 class="section-title">Mojito</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Blueberry</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Strawberry</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Green Apple</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Passion Fruit</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Blue Curacao</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Mint</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Watermelon</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Mango</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- LEMON -->
+        <section class="menu-section" id="lemon">
+            <h2 class="section-title">Lemon</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Fresh Lime</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>20</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Mint Lemon</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>25</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Passion Fruit Lime</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>30</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Green Apple Lime</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>30</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Flavors Lime</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>30</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- AVIL MILK -->
+        <section class="menu-section" id="avil-milk">
+            <h2 class="section-title">Avil Milk</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Avil Milk</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Avil Milk With Dry Fruits</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Avil Milk Special</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>110</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- SHAKE -->
+        <section class="menu-section" id="shake">
+            <h2 class="section-title">Shake</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Chickoo</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Sharjah</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Apple</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Anar</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Cocktail</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Butter</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Tender Coconut</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Ice Cream Shake</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Mango</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Dry Fruits</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Dates & Roasted Cashew</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>120</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Custard Apple</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Blueberry</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>100</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Strawberry</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Berry Mix</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>120</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Galaxy Shake</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Oreo</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>70</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Kitkat</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Gems</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Dragon Fruit</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- SHAKE & TENDER COCONUT -->
+        <section class="menu-section" id="shake-tender">
+            <h2 class="section-title">Shake & Tender Coconut</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Cashew With Tender</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Dry Fruits With Tender</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>100</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Boost With Tender</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>80</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Dates With Tender</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Badam With Tender</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>90</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- JUICE -->
+        <section class="menu-section" id="juice">
+            <h2 class="section-title">Juice</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Orange</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Musambi</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Papaya</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Grape</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Anar</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Watermelon</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Pineapple</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Mango</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>60</span></div>
+        </section>
+        <div class="section-divider"></div>
+
+        <!-- HOT DRINKS -->
+        <section class="menu-section" id="hot-drinks">
+            <h2 class="section-title">Hot Drinks</h2>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Coffee</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>15</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">SP Coffee</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>30</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Tea</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>15</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Lemon Tea</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>15</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Boost</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>20</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Horlicks</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>20</span></div>
+            <div class="menu-item"><span class="veg-indicator"></span><span class="item-name">Badam Milk</span><span class="dotted-line"></span><span class="item-price"><span class="rupee">₹</span>25</span></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <h2 class="footer-name">MUGLY CAFÉ</h2>
+        <p class="footer-address">Municipality Office Building, Kuthuparamba</p>
+        <a href="tel:7025212122" class="phone-button">
+            📞 7025212122
+        </a>
+        <p class="footer-note">Home Delivery Available within 3 km</p>
+        <p class="footer-note">All prices inclusive of taxes</p>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4L4 12H8V20H16V12H20L12 4Z"/>
+        </svg>
+    </button>
+
+    <script>
+        // DOM Elements
+        const backToTopBtn = document.getElementById('backToTop');
+        const navTabs = document.querySelectorAll('.nav-tab');
+        const sections = document.querySelectorAll('.menu-section');
+
+        // Back to Top Button
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Smooth scroll to section on tab click
+        navTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const sectionId = tab.getAttribute('data-section');
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const offset = 70; // Account for sticky nav height
+                    const sectionTop = section.getBoundingClientRect().top + window.scrollY - offset;
+                    window.scrollTo({ top: sectionTop, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Active category highlight on scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '-70px 0px -70% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionId = entry.target.id;
+                    navTabs.forEach(tab => {
+                        if (tab.getAttribute('data-section') === sectionId) {
+                            tab.classList.add('active');
+                            // Scroll tab into view if needed
+                            tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                        } else {
+                            tab.classList.remove('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+
+    <!-- 
+      DEPLOY AS QR MENU:
+      1. Upload this HTML file to Vercel (vercel.com/new, drag and drop)
+      2. Get your URL e.g. mugly-menu.vercel.app
+      3. Go to qr-code-generator.com
+      4. Paste the URL and generate QR code
+      5. Download and print the QR code
+      6. Place one on each table
+      Customers scan QR → see this menu instantly on their phone
+    -->
+</body>
+</html>
