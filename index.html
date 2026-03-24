@@ -6,21 +6,24 @@
     <title>Mugly Café — Digital Menu</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
             --bg-dark: #0E0C09;
             --bg-card: #161b27;
+            --bg-glass: rgba(22, 27, 39, 0.85);
             --gold-primary: #C9963A;
             --gold-light: #E8B84B;
             --gold-glow: rgba(201, 150, 58, 0.15);
+            --gold-shadow: 0 8px 32px rgba(201, 150, 58, 0.25);
             --text-white: #FFFFFF;
             --text-muted: #9CA3AF;
             --veg-green: #22C55E;
@@ -31,6 +34,7 @@
 
         html {
             scroll-behavior: smooth;
+            overscroll-behavior-y: contain;
         }
 
         body {
@@ -40,9 +44,220 @@
             line-height: 1.6;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        /* Loading State */
+        /* =============================================
+           PREMIUM LANDING PAGE
+           ============================================= */
+        .landing-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .landing-page.hidden {
+            opacity: 0;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
+
+        .landing-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            animation: slowZoom 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        .landing-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(14, 12, 9, 0.3) 0%,
+                rgba(14, 12, 9, 0.5) 40%,
+                rgba(14, 12, 9, 0.85) 80%,
+                rgba(14, 12, 9, 0.95) 100%
+            );
+        }
+
+        .landing-glow {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(201, 150, 58, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .landing-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            padding: 60px 24px 40px;
+        }
+
+        .landing-top {
+            text-align: center;
+            animation: fadeDown 1s ease-out;
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .landing-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gold-primary);
+            letter-spacing: 0.15em;
+            text-shadow: 0 4px 30px rgba(201, 150, 58, 0.5);
+            margin-bottom: 40px;
+        }
+
+        .landing-headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.3;
+            color: var(--text-white);
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeUp 1s ease-out 0.3s both;
+        }
+
+        .landing-headline .gold {
+            color: var(--gold-light);
+            text-shadow: 0 0 40px rgba(232, 184, 75, 0.6);
+        }
+
+        .landing-bottom {
+            text-align: center;
+            animation: fadeUp 1s ease-out 0.6s both;
+        }
+
+        .landing-tagline {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            letter-spacing: 0.05em;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            color: var(--bg-dark);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 18px 48px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--gold-shadow),
+                        0 0 60px rgba(201, 150, 58, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(201, 150, 58, 0.4),
+                        0 0 80px rgba(201, 150, 58, 0.3);
+        }
+
+        .cta-button:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .landing-info {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .landing-info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =============================================
+           LOADING STATE
+           ============================================= */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -83,24 +298,9 @@
             to { transform: rotate(360deg); }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, var(--bg-card) 25%, rgba(201, 150, 58, 0.1) 50%, var(--bg-card) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* Error State */
+        /* =============================================
+           ERROR STATE
+           ============================================= */
         .error-message {
             text-align: center;
             padding: 60px 20px;
@@ -113,7 +313,9 @@
             margin-bottom: 16px;
         }
 
-        /* Hero Header */
+        /* =============================================
+           HERO HEADER (MENU PAGE)
+           ============================================= */
         .hero-header {
             text-align: center;
             padding: 60px 20px 40px;
@@ -127,8 +329,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 400px;
-            height: 400px;
+            width: 500px;
+            height: 500px;
             background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
             pointer-events: none;
         }
@@ -142,6 +344,7 @@
             margin-bottom: 8px;
             position: relative;
             animation: fadeUp 0.8s ease-out;
+            text-shadow: 0 4px 30px rgba(201, 150, 58, 0.3);
         }
 
         .cafe-subtitle {
@@ -196,14 +399,17 @@
             font-size: 1rem;
         }
 
-        /* Admin Toggle Button */
+        /* =============================================
+           ADMIN TOGGLE
+           ============================================= */
         .admin-toggle {
             position: fixed;
             top: 16px;
             right: 16px;
-            width: 40px;
-            height: 40px;
-            background: rgba(201, 150, 58, 0.2);
+            width: 44px;
+            height: 44px;
+            background: rgba(201, 150, 58, 0.15);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(201, 150, 58, 0.3);
             border-radius: 50%;
             display: flex;
@@ -211,11 +417,17 @@
             justify-content: center;
             cursor: pointer;
             z-index: 101;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .admin-toggle:hover {
-            background: rgba(201, 150, 58, 0.3);
+            background: rgba(201, 150, 58, 0.25);
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(201, 150, 58, 0.3);
+        }
+
+        .admin-toggle:active {
+            transform: scale(0.95);
         }
 
         .admin-toggle svg {
@@ -224,7 +436,9 @@
             fill: var(--gold-primary);
         }
 
-        /* Admin Drawer */
+        /* =============================================
+           ADMIN DRAWER
+           ============================================= */
         .admin-drawer {
             position: fixed;
             top: 0;
@@ -232,12 +446,14 @@
             width: 100%;
             max-width: 400px;
             height: 100vh;
-            background: var(--bg-dark);
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
             border-left: 1px solid rgba(201, 150, 58, 0.3);
             z-index: 200;
-            transition: right 0.3s ease;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
             padding: 20px;
+            overscroll-behavior: contain;
         }
 
         .admin-drawer.open {
@@ -250,7 +466,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
             z-index: 199;
             opacity: 0;
             visibility: hidden;
@@ -278,14 +495,23 @@
         }
 
         .admin-close {
-            width: 36px;
-            height: 36px;
-            background: none;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--text-white);
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+            transition: all 0.2s ease;
+        }
+
+        .admin-close:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .admin-close:active {
+            transform: scale(0.95);
         }
 
         /* Login Form */
@@ -306,7 +532,7 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             color: var(--text-muted);
             font-size: 0.85rem;
         }
@@ -314,38 +540,45 @@
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 12px 16px;
-            background: var(--bg-card);
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(201, 150, 58, 0.3);
-            border-radius: 8px;
+            border-radius: 12px;
             color: var(--text-white);
             font-size: 1rem;
+            transition: all 0.2s ease;
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
             border-color: var(--gold-primary);
+            box-shadow: 0 0 20px rgba(201, 150, 58, 0.2);
         }
 
         .btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
             color: var(--bg-dark);
+            box-shadow: 0 4px 20px rgba(201, 150, 58, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(201, 150, 58, 0.3);
+            box-shadow: 0 8px 30px rgba(201, 150, 58, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
         }
 
         .btn-danger {
@@ -360,8 +593,8 @@
         }
 
         .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.8rem;
+            padding: 8px 14px;
+            font-size: 0.85rem;
         }
 
         .btn-block {
@@ -371,20 +604,22 @@
         /* Admin Tabs */
         .admin-tabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 24px;
         }
 
         .admin-tab {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(201, 150, 58, 0.2);
-            border-radius: 8px;
+            border-radius: 12px;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            font-weight: 500;
             text-align: center;
+            transition: all 0.2s ease;
         }
 
         .admin-tab.active {
@@ -393,35 +628,44 @@
             color: var(--gold-primary);
         }
 
+        .admin-tab:hover {
+            background: rgba(201, 150, 58, 0.1);
+        }
+
+        .admin-tab:active {
+            transform: scale(0.98);
+        }
+
         /* Admin Section */
         .admin-section {
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .admin-section-title {
             font-size: 1rem;
             color: var(--gold-light);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
             border-bottom: 1px solid rgba(201, 150, 58, 0.2);
         }
 
         /* Offer Editor */
         .offer-item {
             display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 14px;
             align-items: center;
         }
 
         .offer-item input {
             flex: 1;
-            padding: 10px 12px;
-            background: var(--bg-card);
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(201, 150, 58, 0.3);
-            border-radius: 6px;
+            border-radius: 10px;
             color: var(--text-white);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
         }
 
         .offer-item input:focus {
@@ -430,136 +674,190 @@
         }
 
         .offer-item .price-input {
-            width: 80px;
+            width: 90px;
             flex: none;
         }
 
         .offer-item .delete-btn {
-            width: 36px;
-            height: 36px;
-            background: rgba(220, 38, 38, 0.2);
-            border: none;
-            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            background: rgba(220, 38, 38, 0.15);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 10px;
             color: var(--danger-red);
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .offer-item .delete-btn:hover {
+            background: rgba(220, 38, 38, 0.25);
         }
 
         .add-item-btn {
             width: 100%;
-            padding: 10px;
+            padding: 14px;
             background: rgba(34, 197, 94, 0.1);
-            border: 1px dashed rgba(34, 197, 94, 0.5);
-            border-radius: 8px;
+            border: 1px dashed rgba(34, 197, 94, 0.4);
+            border-radius: 12px;
             color: var(--veg-green);
             cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .add-item-btn:hover {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.6);
         }
 
         /* Category Selector */
         .category-select {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         /* Menu Item Editor */
         .menu-item-editor {
             background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 14px;
             margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .menu-item-editor:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(201, 150, 58, 0.2);
         }
 
         .menu-item-editor .item-row {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
         }
 
         .menu-item-editor .type-indicator {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             flex-shrink: 0;
         }
 
         .menu-item-editor .type-indicator.veg {
             background: var(--veg-green);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
         }
 
         .menu-item-editor .type-indicator.nonveg {
             background: var(--nonveg-red);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
         }
 
         .menu-item-editor input {
             flex: 1;
-            padding: 8px 12px;
-            background: var(--bg-card);
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(201, 150, 58, 0.3);
-            border-radius: 6px;
+            border-radius: 8px;
             color: var(--text-white);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
 
         .menu-item-editor .price-input {
-            width: 70px;
+            width: 80px;
             flex: none;
         }
 
         .menu-item-editor .actions {
             display: flex;
-            gap: 4px;
+            gap: 6px;
         }
 
         .menu-item-editor .icon-btn {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            transition: all 0.2s ease;
         }
 
         .menu-item-editor .icon-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .menu-item-editor .icon-btn:active {
+            transform: scale(0.95);
         }
 
         .menu-item-editor .icon-btn.delete {
             color: var(--danger-red);
         }
 
+        .menu-item-editor .icon-btn.delete:hover {
+            background: rgba(220, 38, 38, 0.2);
+        }
+
         .menu-item-editor .icon-btn.save {
             color: var(--veg-green);
         }
 
-        /* Special Offer Banner */
+        .menu-item-editor .icon-btn.save:hover {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        /* =============================================
+           SPECIAL OFFER BANNER (GLASSMORPHISM)
+           ============================================= */
         .special-banner {
-            margin: 0 16px 24px;
-            padding: 16px 20px;
-            background: linear-gradient(135deg, rgba(201, 150, 58, 0.1) 0%, rgba(232, 184, 75, 0.05) 100%);
-            border: 1px solid var(--gold-primary);
-            border-radius: 12px;
+            margin: 0 16px 28px;
+            padding: 20px 24px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(201, 150, 58, 0.4);
+            border-radius: 20px;
             animation: fadeUp 0.8s ease-out 0.4s both;
+            box-shadow: var(--gold-shadow),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .special-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(201, 150, 58, 0.1) 0%, transparent 50%);
+            pointer-events: none;
         }
 
         .special-badge {
             display: inline-block;
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
             color: var(--bg-dark);
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 6px 14px;
             border-radius: 20px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(201, 150, 58, 0.4);
         }
 
         .special-item {
             font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--gold-light);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(201, 150, 58, 0.3);
         }
 
         .special-item:last-child {
@@ -568,23 +866,26 @@
 
         .special-price {
             color: var(--text-white);
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        /* Sticky Navigation */
+        /* =============================================
+           STICKY NAVIGATION (GLASSMORPHISM)
+           ============================================= */
         .sticky-nav {
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(14, 12, 9, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(14, 12, 9, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(201, 150, 58, 0.3);
             padding: 0 16px;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             -ms-overflow-style: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
         }
 
         .sticky-nav::-webkit-scrollbar {
@@ -595,21 +896,21 @@
             display: flex;
             gap: 0;
             white-space: nowrap;
-            padding: 12px 0;
+            padding: 14px 0;
         }
 
         .nav-tab {
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 600;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
             color: var(--text-muted);
-            padding: 8px 14px;
+            padding: 10px 16px;
             border: none;
             background: none;
             cursor: pointer;
             position: relative;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
             white-space: nowrap;
         }
 
@@ -621,8 +922,9 @@
             transform: translateX(-50%);
             width: 0;
             height: 2px;
-            background: var(--gold-primary);
+            background: linear-gradient(90deg, var(--gold-primary), var(--gold-light));
             transition: width 0.3s ease;
+            border-radius: 2px;
         }
 
         .nav-tab.active {
@@ -630,26 +932,33 @@
         }
 
         .nav-tab.active::after {
-            width: 80%;
+            width: 60%;
         }
 
         .nav-tab:hover {
             color: var(--gold-light);
         }
 
-        /* Menu Sections */
+        .nav-tab:active {
+            transform: scale(0.95);
+        }
+
+        /* =============================================
+           MENU SECTIONS (PREMIUM CARDS)
+           ============================================= */
         .menu-container {
-            padding: 24px 16px 80px;
-            max-width: 600px;
+            padding: 28px 16px 100px;
+            max-width: 650px;
             margin: 0 auto;
         }
 
         .menu-section {
-            margin-bottom: 32px;
-            scroll-margin-top: 70px;
+            margin-bottom: 40px;
+            scroll-margin-top: 80px;
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(30px);
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .menu-section.loaded {
@@ -659,13 +968,14 @@
 
         .section-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--gold-primary);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
+            text-shadow: 0 2px 20px rgba(201, 150, 58, 0.3);
         }
 
         .section-title::after {
@@ -678,122 +988,155 @@
         .menu-item {
             display: flex;
             align-items: center;
-            padding: 12px 0;
+            padding: 16px 4px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: background 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            margin: 0 -8px;
+            cursor: default;
         }
 
         .menu-item:hover {
-            background: rgba(201, 150, 58, 0.05);
-            margin: 0 -12px;
-            padding: 12px;
-            border-radius: 8px;
+            background: rgba(201, 150, 58, 0.08);
+            padding-left: 16px;
+            padding-right: 16px;
+            margin: 0 -16px;
+            box-shadow: 0 4px 20px rgba(201, 150, 58, 0.1);
+        }
+
+        .menu-item:active {
+            transform: scale(0.99);
         }
 
         .veg-indicator,
         .nonveg-indicator {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            margin-right: 12px;
+            margin-right: 14px;
             flex-shrink: 0;
         }
 
         .veg-indicator {
             background: var(--veg-green);
-            box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
         }
 
         .nonveg-indicator {
             background: var(--nonveg-red);
-            box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
         }
 
         .item-name {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--text-white);
             flex-shrink: 0;
+            font-weight: 500;
         }
 
         .dotted-line {
             flex: 1;
-            border-bottom: 1px dotted rgba(201, 150, 58, 0.3);
-            margin: 0 12px;
-            min-width: 20px;
+            border-bottom: 1px dotted rgba(201, 150, 58, 0.25);
+            margin: 0 14px;
+            min-width: 30px;
         }
 
         .item-price {
             font-family: 'Playfair Display', serif;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--gold-light);
             flex-shrink: 0;
+            text-shadow: 0 2px 10px rgba(201, 150, 58, 0.3);
         }
 
         .rupee {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             vertical-align: super;
         }
 
         .section-divider {
             height: 1px;
             background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
-            margin: 24px 0;
+            margin: 32px 0;
+            opacity: 0.5;
         }
 
-        /* Footer */
+        /* =============================================
+           FOOTER
+           ============================================= */
         .footer {
             text-align: center;
-            padding: 40px 20px 60px;
+            padding: 50px 20px 70px;
             background: linear-gradient(180deg, transparent, rgba(201, 150, 58, 0.05));
             border-top: 1px solid rgba(201, 150, 58, 0.2);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
         }
 
         .footer-name {
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: var(--gold-primary);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 20px rgba(201, 150, 58, 0.3);
         }
 
         .footer-address {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .phone-button {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
             color: var(--bg-dark);
-            font-weight: 600;
-            padding: 12px 24px;
-            border-radius: 30px;
+            font-weight: 700;
+            padding: 16px 32px;
+            border-radius: 50px;
             text-decoration: none;
-            margin-bottom: 16px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--gold-shadow);
         }
 
         .phone-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(201, 150, 58, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(201, 150, 58, 0.4);
+        }
+
+        .phone-button:active {
+            transform: translateY(-1px) scale(0.98);
         }
 
         .footer-note {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            margin-top: 8px;
+            margin-top: 10px;
         }
 
-        /* Back to Top Button */
+        /* =============================================
+           BACK TO TOP BUTTON
+           ============================================= */
         .back-to-top {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 48px;
-            height: 48px;
+            bottom: 28px;
+            right: 28px;
+            width: 52px;
+            height: 52px;
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
             border-radius: 50%;
             display: flex;
@@ -802,9 +1145,9 @@
             cursor: pointer;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 99;
-            box-shadow: 0 4px 15px rgba(201, 150, 58, 0.4);
+            box-shadow: var(--gold-shadow);
             border: none;
         }
 
@@ -814,7 +1157,12 @@
         }
 
         .back-to-top:hover {
-            transform: translateY(-3px);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(201, 150, 58, 0.5);
+        }
+
+        .back-to-top:active {
+            transform: translateY(-2px) scale(0.98);
         }
 
         .back-to-top svg {
@@ -823,20 +1171,24 @@
             fill: var(--bg-dark);
         }
 
-        /* Toast Notification */
+        /* =============================================
+           TOAST NOTIFICATION
+           ============================================= */
         .toast {
             position: fixed;
-            bottom: 80px;
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--bg-card);
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--gold-primary);
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 50px;
             color: var(--text-white);
             z-index: 300;
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--gold-shadow);
         }
 
         .toast.show {
@@ -846,33 +1198,38 @@
 
         .toast.success {
             border-color: var(--veg-green);
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.3);
         }
 
         .toast.error {
             border-color: var(--danger-red);
+            box-shadow: 0 8px 30px rgba(220, 38, 38, 0.3);
         }
 
-        /* Animations */
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive */
+        /* =============================================
+           RESPONSIVE
+           ============================================= */
         @media (max-width: 360px) {
             .cafe-name {
-                font-size: 2.5rem;
+                font-size: 2.4rem;
+            }
+
+            .landing-logo {
+                font-size: 2rem;
+            }
+
+            .landing-headline {
+                font-size: 1.8rem;
             }
 
             .info-row {
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
+            }
+
+            .cta-button {
+                padding: 16px 36px;
+                font-size: 1rem;
             }
         }
 
@@ -881,20 +1238,74 @@
                 font-size: 4rem;
             }
 
+            .landing-logo {
+                font-size: 3.5rem;
+            }
+
+            .landing-headline {
+                font-size: 3rem;
+            }
+
             .menu-container {
-                max-width: 700px;
+                max-width: 750px;
+            }
+
+            .section-title {
+                font-size: 1.7rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .landing-headline {
+                font-size: 3.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
+    <!-- =============================================
+         PREMIUM LANDING PAGE
+         ============================================= -->
+    <div class="landing-page" id="landingPage">
+        <div class="landing-bg"></div>
+        <div class="landing-overlay"></div>
+        <div class="landing-glow"></div>
+        
+        <div class="landing-content">
+            <div class="landing-top">
+                <h1 class="landing-logo">MUGLY CAFÉ</h1>
+                <h2 class="landing-headline">
+                    <span class="gold">Crispy.</span> Creamy.<br>
+                    <span class="gold">Crazy Delicious.</span>
+                </h2>
+            </div>
+            
+            <div class="landing-bottom">
+                <p class="landing-tagline">Scan. Explore. Taste the Mugly Experience.</p>
+                <button class="cta-button" id="ctaButton">
+                    <span>👉</span>
+                    <span>View Menu</span>
+                </button>
+                <div class="landing-info">
+                    <span class="landing-info-item">📍 Kuthuparamba</span>
+                    <span class="landing-info-item">🚚 Delivery 3 km</span>
+                    <span class="landing-info-item">📞 7025212122</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =============================================
+         LOADING OVERLAY
+         ============================================= -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
         <p class="loading-text">Loading Menu...</p>
     </div>
 
-    <!-- Admin Toggle Button -->
+    <!-- =============================================
+         ADMIN TOGGLE
+         ============================================= -->
     <button class="admin-toggle" id="adminToggle" title="Admin Panel">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9H15V22H13V16H11V22H9V9H3V7H21V9Z"/>
@@ -923,7 +1334,7 @@
             </form>
         </div>
 
-        <!-- Admin Content (hidden until logged in) -->
+        <!-- Admin Content -->
         <div id="adminContent" style="display: none;">
             <div class="admin-tabs">
                 <button class="admin-tab active" data-tab="offers">Offers</button>
@@ -953,67 +1364,72 @@
                 </div>
             </div>
 
-            <button class="btn btn-secondary btn-block" id="logoutBtn" style="margin-top: 24px;">Logout</button>
+            <button class="btn btn-secondary btn-block" id="logoutBtn" style="margin-top: 28px;">Logout</button>
         </div>
     </div>
 
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
-    <!-- Hero Header -->
-    <header class="hero-header">
-        <h1 class="cafe-name">MUGLY CAFÉ</h1>
-        <p class="cafe-subtitle">KUTHUPARAMBA</p>
-        <div class="ornament-line">
-            <svg class="ornament-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L14.5 9H22L16 13.5L18.5 21L12 16.5L5.5 21L8 13.5L2 9H9.5L12 2Z"/>
+    <!-- =============================================
+         MENU PAGE
+         ============================================= -->
+    <div id="menuPage" style="opacity: 0;">
+        <!-- Hero Header -->
+        <header class="hero-header">
+            <h1 class="cafe-name">MUGLY CAFÉ</h1>
+            <p class="cafe-subtitle">KUTHUPARAMBA</p>
+            <div class="ornament-line">
+                <svg class="ornament-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L14.5 9H22L16 13.5L18.5 21L12 16.5L5.5 21L8 13.5L2 9H9.5L12 2Z"/>
+                </svg>
+            </div>
+            <div class="info-row">
+                <span class="info-item"><span class="info-icon">📍</span>Municipality Office Building</span>
+                <span class="info-item"><span class="info-icon">🚚</span>Home Delivery 3km</span>
+                <span class="info-item"><span class="info-icon">📞</span>7025212122</span>
+            </div>
+        </header>
+
+        <!-- Special Offer Banner -->
+        <div class="special-banner" id="specialBanner">
+            <span class="special-badge">🔥 Special</span>
+            <div id="offerContent">
+                <p class="special-item">Loading offers...</p>
+            </div>
+        </div>
+
+        <!-- Sticky Navigation -->
+        <nav class="sticky-nav" id="stickyNav">
+            <div class="nav-tabs" id="navTabs"></div>
+        </nav>
+
+        <!-- Menu Container -->
+        <main class="menu-container" id="menuContainer">
+            <div class="error-message" id="errorMessage" style="display: none;">
+                <h2>Menu Unavailable</h2>
+                <p>Please ask staff for assistance.</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <h2 class="footer-name">MUGLY CAFÉ</h2>
+            <p class="footer-address">Municipality Office Building, Kuthuparamba</p>
+            <a href="tel:7025212122" class="phone-button">
+                📞 7025212122
+            </a>
+            <p class="footer-note">Home Delivery Available within 3 km</p>
+            <p class="footer-note">All prices inclusive of taxes</p>
+        </footer>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" id="backToTop" aria-label="Back to top">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4L4 12H8V20H16V12H20L12 4Z"/>
             </svg>
-        </div>
-        <div class="info-row">
-            <span class="info-item"><span class="info-icon">📍</span>Municipality Office Building</span>
-            <span class="info-item"><span class="info-icon">🚚</span>Home Delivery 3km</span>
-            <span class="info-item"><span class="info-icon">📞</span>7025212122</span>
-        </div>
-    </header>
-
-    <!-- Special Offer Banner -->
-    <div class="special-banner" id="specialBanner">
-        <span class="special-badge">🔥 Special</span>
-        <div id="offerContent">
-            <p class="special-item">Loading offers...</p>
-        </div>
+        </button>
     </div>
-
-    <!-- Sticky Navigation -->
-    <nav class="sticky-nav" id="stickyNav">
-        <div class="nav-tabs" id="navTabs"></div>
-    </nav>
-
-    <!-- Menu Container -->
-    <main class="menu-container" id="menuContainer">
-        <div class="error-message" id="errorMessage" style="display: none;">
-            <h2>Menu Unavailable</h2>
-            <p>Please ask staff for assistance.</p>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <h2 class="footer-name">MUGLY CAFÉ</h2>
-        <p class="footer-address">Municipality Office Building, Kuthuparamba</p>
-        <a href="tel:7025212122" class="phone-button">
-            📞 7025212122
-        </a>
-        <p class="footer-note">Home Delivery Available within 3 km</p>
-        <p class="footer-note">All prices inclusive of taxes</p>
-    </footer>
-
-    <!-- Back to Top Button -->
-    <button class="back-to-top" id="backToTop" aria-label="Back to top">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 4L4 12H8V20H16V12H20L12 4Z"/>
-        </svg>
-    </button>
 
     <script>
         // =============================================
@@ -1032,10 +1448,14 @@
         let isLoggedIn = false;
         let draftOffer = [];
         let selectedCategorySlug = '';
+        let landingDismissed = false;
 
         // =============================================
         // DOM ELEMENTS
         // =============================================
+        const landingPage = document.getElementById('landingPage');
+        const ctaButton = document.getElementById('ctaButton');
+        const menuPage = document.getElementById('menuPage');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const adminToggle = document.getElementById('adminToggle');
         const adminOverlay = document.getElementById('adminOverlay');
@@ -1059,6 +1479,32 @@
         const menuContainer = document.getElementById('menuContainer');
         const errorMessage = document.getElementById('errorMessage');
         const backToTopBtn = document.getElementById('backToTop');
+
+        // =============================================
+        // LANDING PAGE TRANSITION
+        // =============================================
+        function dismissLanding() {
+            if (landingDismissed) return;
+            landingDismissed = true;
+            
+            landingPage.classList.add('hidden');
+            
+            setTimeout(() => {
+                menuPage.style.opacity = '1';
+                menuPage.style.transition = 'opacity 0.5s ease';
+            }, 400);
+        }
+
+        ctaButton.addEventListener('click', dismissLanding);
+
+        // Allow tap anywhere to dismiss on mobile
+        landingPage.addEventListener('click', (e) => {
+            if (e.target === landingPage || e.target.closest('.landing-content')) {
+                if (!e.target.closest('.cta-button')) {
+                    // Optional: dismiss on any tap
+                }
+            }
+        });
 
         // =============================================
         // TOAST NOTIFICATION
@@ -1162,10 +1608,10 @@
                 ${index < menuData.length - 1 ? '<div class="section-divider"></div>' : ''}
             `).join('');
 
-            // Animate sections
+            // Animate sections with stagger
             setTimeout(() => {
                 document.querySelectorAll('.menu-section').forEach((section, i) => {
-                    setTimeout(() => section.classList.add('loaded'), i * 100);
+                    setTimeout(() => section.classList.add('loaded'), i * 80);
                 });
             }, 100);
 
@@ -1258,7 +1704,6 @@
         }
 
         async function publishOffer() {
-            // Collect values from inputs
             const items = [];
             document.querySelectorAll('#offerEditor .offer-item').forEach((row, index) => {
                 const name = row.querySelector('.offer-name').value.trim();
@@ -1269,10 +1714,8 @@
             });
 
             try {
-                // Delete all existing
                 await supabase.from('special_offer').delete().neq('id', 0);
                 
-                // Insert new
                 if (items.length > 0) {
                     const { error } = await supabase.from('special_offer').insert(items);
                     if (error) throw error;
@@ -1308,7 +1751,6 @@
 
                 if (error) throw error;
 
-                // Update local data
                 const category = menuData.find(c => c.slug === selectedCategorySlug);
                 const item = category.items.find(i => i.id === itemId);
                 if (item) {
@@ -1397,17 +1839,16 @@
                         });
                     }
                 });
-            }, { rootMargin: '-70px 0px -70% 0px' });
+            }, { rootMargin: '-80px 0px -70% 0px' });
 
             sections.forEach(section => observer.observe(section));
 
-            // Tab click handlers
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const sectionId = tab.getAttribute('data-section');
                     const section = document.getElementById(sectionId);
                     if (section) {
-                        const offset = 70;
+                        const offset = 80;
                         const sectionTop = section.getBoundingClientRect().top + window.scrollY - offset;
                         window.scrollTo({ top: sectionTop, behavior: 'smooth' });
                     }
